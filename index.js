@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 
@@ -28,23 +28,32 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const carCollections = client.db("carsDB").collection('cars');
+    const toyCollections = client.db("toysDB").collection('toys');
 
-    
+
     //send all car data to client side or get data from mongodb
-    app.get('/all-cars', async (req,res) => {
-        const cars = await carCollections.find().toArray();
+    app.get('/all-toys', async (req,res) => {
+        const cars = await toyCollections.find().toArray();
         res.send(cars);
+    })
 
+    app.get('/all-toys/:id', async (req,res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)};
+        const result = await toyCollections.findOne(query);
+        res.send(result)
     })
 
     //send data to mongodb
-    app.post('/cars', async (req, res) => {
-        const newCar = req.body;
-        console.log(newCar);
-        const result = await carCollections.insertOne(newCar);
+    app.post('/toys', async (req, res) => {
+        const newToy = req.body;
+        // console.log(newToy);
+        const result = await toyCollections.insertOne(newToy);
         res.send(result);
-      })
+    })
+
+    
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
