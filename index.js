@@ -30,6 +30,15 @@ async function run() {
 
     const carCollections = client.db("carsDB").collection('cars');
 
+    
+    //send all car data to client side or get data from mongodb
+    app.get('/all-cars', async (req,res) => {
+        const cars = await carCollections.find().toArray();
+        res.send(cars);
+
+    })
+
+    //send data to mongodb
     app.post('/cars', async (req, res) => {
         const newCar = req.body;
         console.log(newCar);
