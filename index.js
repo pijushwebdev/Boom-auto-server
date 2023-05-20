@@ -33,8 +33,8 @@ async function run() {
 
     //send all car data to client side or get data from mongodb
     app.get('/all-toys', async (req,res) => {
-        const cars = await toyCollections.find().limit(20).toArray();
-        res.send(cars);
+        const toys = await toyCollections.find().limit(20).toArray();
+        res.send(toys);
     })
 
     //find my-toys by gmail
@@ -45,6 +45,24 @@ async function run() {
       const result = await toyCollections.find(query).toArray();
       res.send(result);
     })
+
+    //start search operation by Toy name
+    const indexKey = {toyName: 1};
+    const indexOption = {name: "toySearch"};
+    const result = await toyCollections.createIndex(indexKey,indexOption);
+
+    // to handle error for empty string
+    app.get('/toySearch', async (req,res) => {
+        const toys = await toyCollections.find().limit(20).toArray();
+        res.send(toys);
+    })
+    app.get('/toySearch/:text', async (req,res) => {
+      const searchText = req.params.text;
+      const result = await toyCollections.find({toyName: {$regex: searchText, $options: "i"}}).toArray();
+      console.log(result);
+      res.send(result);
+    })
+    //end search
 
     //find single data by Id
     app.get('/all-toys/:id', async (req,res) => {
