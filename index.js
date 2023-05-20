@@ -70,7 +70,39 @@ async function run() {
         const query = {_id: new ObjectId(id)};
         const result = await toyCollections.findOne(query);
         res.send(result)
+    }) 
+
+    // for update a data
+
+    //for load the clicked data in update page
+    app.get('/myToys/:id', async (req,res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const options = {
+        projection: { _id: 1, price: 1, availableQuantity: 1,sellerEmail: 1,detailsDescription: 1 },
+      };
+      const result = await toyCollections.findOne(query, options);
+      res.send(result)
     })
+    //for update the data and send to Database
+    app.put('/myToys/:id', async (req,res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options = { upsert: true };
+      const updatedToy = req.body;
+
+      const coffee = {
+        $set: {
+          price: updatedToy.price,
+          availableQuantity: updatedToy.availableQuantity, 
+          detailsDescription: updatedToy.detailsDescription
+        }
+      }
+      const result = await toyCollections.updateOne(filter, coffee,options);
+      res.send(result)
+    })
+
+    //update end....
 
     //send data to mongodb
     app.post('/toys', async (req, res) => {
@@ -80,7 +112,13 @@ async function run() {
         res.send(result);
     })
 
-    
+    //delete
+    app.delete('/myToys/:id', async (req,res) => {
+      const id = req.params.id;
+      const query ={_id: new ObjectId(id)};
+      const result = await toyCollections.deleteOne(query);
+      res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
