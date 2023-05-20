@@ -120,6 +120,21 @@ async function run() {
       res.send(result);
     })
 
+    //sorting
+    app.get('/ascending', async (req,res) => {
+      const email = req.query.email;
+      const filter = {sellerEmail:email}
+      const result = await toyCollections.find(filter).sort({price: 1}).toArray();
+      res.send(result);
+    })
+
+    app.get('/descending', async (req,res) => {
+      const email = req.query.email;
+      const filter = {sellerEmail:email}
+      const result = await toyCollections.find(filter).sort({price: -1}).toArray();
+      res.send(result);
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
