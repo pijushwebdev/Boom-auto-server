@@ -33,10 +33,20 @@ async function run() {
 
     //send all car data to client side or get data from mongodb
     app.get('/all-toys', async (req,res) => {
-        const cars = await toyCollections.find().toArray();
+        const cars = await toyCollections.find().limit(20).toArray();
         res.send(cars);
     })
 
+    //find my-toys by gmail
+    app.get('/my-toys/:email', async (req,res) => {
+      const email = req.params.email;
+      // console.log(email);
+      const query = {sellerEmail: req.params.email};
+      const result = await toyCollections.find(query).toArray();
+      res.send(result);
+    })
+
+    //find single data by Id
     app.get('/all-toys/:id', async (req,res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)};
