@@ -168,3 +168,6 @@ app.get('/', (req,res) => {
 app.listen(port, () => {
     console.log(`Boom server is running on port: ${port}`);
 })
+
+// "src": "/(.*)",
+// "dest": "/",
