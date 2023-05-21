@@ -25,19 +25,19 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+     client.connect();
 
     const toyCollections = client.db("toysDB").collection('toys');
 
 
     //send all car data to client side or get data from mongodb
-    app.get('/all-toys', async (req,res) => {
+    app.get('/allToys', async (req,res) => {
         const toys = await toyCollections.find().limit(20).toArray();
         res.send(toys);
     })
 
     //for tab sub-category
-    app.get('/all-toys/:text', async (req,res) => {
+    app.get('/allToys/:text', async (req,res) => {
       // console.log(req.params.text);
       if(req.params.text == 'Sports_cars' || req.params.text == 'Regular_cars' || req.params.text == 'Police_cars'){
         const result = await toyCollections.find({subCategory: req.params.text}).toArray();
@@ -51,7 +51,7 @@ async function run() {
     //category end
 
     //find my-toys by gmail
-    app.get('/my-toys/:email', async (req,res) => {
+    app.get('/myToys/:email', async (req,res) => {
       const email = req.params.email;
       // console.log(email);
       const query = {sellerEmail: req.params.email};
@@ -78,7 +78,7 @@ async function run() {
     //end search
 
     //find single data by Id
-    app.get('/all-toys/:id', async (req,res) => {
+    app.get('/allToys/:id', async (req,res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)};
         const result = await toyCollections.findOne(query);
