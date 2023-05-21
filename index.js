@@ -37,6 +37,20 @@ async function run() {
         res.send(toys);
     })
 
+    //for tab sub-category
+    app.get('/all-toys/:text', async (req,res) => {
+      // console.log(req.params.text);
+      if(req.params.text == 'Sports_cars' || req.params.text == 'Regular_cars' || req.params.text == 'Police_cars'){
+        const result = await toyCollections.find({subCategory: req.params.text}).toArray();
+
+        return res.send(result);
+      }
+      const result = await toyCollections.find({}).toArray();
+      res.send(result);
+    })
+
+    //category end
+
     //find my-toys by gmail
     app.get('/my-toys/:email', async (req,res) => {
       const email = req.params.email;
