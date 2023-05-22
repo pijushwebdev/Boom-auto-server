@@ -36,8 +36,13 @@ async function run() {
         res.send(toys);
     })
 
-    //for tab sub-category
-    app.get('/allToys/:text', async (req,res) => {
+    //for tab sub-category //category
+
+    app.get('/category', async (req,res) => {
+      const toys = await toyCollections.find().limit(20).toArray();
+      res.send(toys);
+  })
+    app.get('/category/:text', async (req,res) => {
       // console.log(req.params.text);
       if(req.params.text == 'Sports_cars' || req.params.text == 'Regular_cars' || req.params.text == 'Police_cars'){
         const result = await toyCollections.find({subCategory: req.params.text}).toArray();
@@ -72,7 +77,7 @@ async function run() {
     app.get('/toySearch/:text', async (req,res) => {
       const searchText = req.params.text;
       const result = await toyCollections.find({toyName: {$regex: searchText, $options: "i"}}).toArray();
-      console.log(result);
+      // console.log(result);
       res.send(result);
     })
     //end search
@@ -80,6 +85,7 @@ async function run() {
     //find single data by Id
     app.get('/allToys/:id', async (req,res) => {
         const id = req.params.id;
+        // console.log(id);
         const query = {_id: new ObjectId(id)};
         const result = await toyCollections.findOne(query);
         res.send(result)
@@ -87,31 +93,31 @@ async function run() {
 
     // for update a data
 
-    //for load the clicked data in update page
-    app.get('/myToys/:id', async (req,res) => {
+    //for load the clicked data in update page //myToys
+    app.get('/updateMyToys/:id', async (req,res) => {
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
       const options = {
-        projection: { _id: 1, price: 1, availableQuantity: 1,sellerEmail: 1,detailsDescription: 1 },
+        projection: { _id: 1, price: 1, availableQuantity: 1,sellerEmail: 1,detailsDescription: 1,toyName: 1},
       };
       const result = await toyCollections.findOne(query, options);
       res.send(result)
     })
-    //for update the data and send to Database
-    app.put('/myToys/:id', async (req,res) => {
+    //for update the data and send to Database //myToys
+    app.put('/updateMyToys/:id', async (req,res) => {
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)}
       const options = { upsert: true };
       const updatedToy = req.body;
 
-      const coffee = {
+      const toys = {
         $set: {
           price: updatedToy.price,
           availableQuantity: updatedToy.availableQuantity, 
           detailsDescription: updatedToy.detailsDescription
         }
       }
-      const result = await toyCollections.updateOne(filter, coffee,options);
+      const result = await toyCollections.updateOne(filter, toys,options);
       res.send(result)
     })
 
@@ -126,7 +132,7 @@ async function run() {
     })
 
     //delete
-    app.delete('/myToys/:id', async (req,res) => {
+    app.delete('/deleteToy/:id', async (req,res) => {
       const id = req.params.id;
       const query ={_id: new ObjectId(id)};
       const result = await toyCollections.deleteOne(query);
@@ -168,6 +174,3 @@ app.get('/', (req,res) => {
 app.listen(port, () => {
     console.log(`Boom server is running on port: ${port}`);
 })
-
-// "src": "/(.*)",
-// "dest": "/",
